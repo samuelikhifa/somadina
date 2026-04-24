@@ -59,7 +59,7 @@ export default function LeadCaptureForm() {
       Sign up to <span className="text-[#b5534e]">unlock exclusive content</span>and upcoming offers
       </p>
       <p className="text-center text-sm text-[#2b1a10]/70">
-        Enter your details to unlock the discounted price
+        One step closer to feeling like yourself again
       </p>
       <div className="relative">
         <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-[#c9973a]" />
