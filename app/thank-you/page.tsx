@@ -64,7 +64,7 @@ export default function ThankYouPage() {
             <div className="bg-white/70 rounded-2xl px-6 md:px-8 py-8 space-y-4" style={{ boxShadow: 'var(--shadow-md)' }}>
               {[
                 'Please check your inbox now',
-                'If you don&apos;t see it, check your spam or promotions folder',
+                "If you don't see it, check your spam or promotions folder",
               ].map((item, i) => (
                 <div key={i} className="flex items-center gap-3 bg-[#fdf6ee] rounded-xl px-5 py-4" style={{ boxShadow: 'var(--shadow-sm)' }}>
                   <ArrowRight className="w-5 h-5 text-[#c9973a] flex-shrink-0" />
