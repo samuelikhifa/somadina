@@ -4,7 +4,7 @@ import { MessageCircle } from 'lucide-react'
 
 export default function WhatsAppWidget() {
   const whatsappNumber = '+2348111839490' // Replace with actual number
-  const message = encodeURIComponent('Hi! I\'m interested in the intimacy guide for women over 40.')
+  const message = encodeURIComponent('DESIRED')
 
   return (
     <a
