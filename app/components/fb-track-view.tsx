@@ -8,7 +8,7 @@ export default function FBTrackView() {
       (window as any).fbq('track', 'ViewContent', {
         content_name: 'Intimacy Guide Landing Page',
         content_type: 'product',
-        value: 9500,
+        value: 4500,
         currency: 'NGN',
       })
     }
