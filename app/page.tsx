@@ -5,8 +5,9 @@ import {
   Apple, Sun, MessageCircle
 } from 'lucide-react'
 import LeadCaptureForm from './components/lead-capture-form'
+
 import FAQAccordion from './components/faq-accordion'
-import WhatsAppWidget from './components/whatsapp-widget'
+// import WhatsAppWidget from './components/whatsapp-widget'
 import CTAButton from './components/cta-button'
 import ScrollAnimate from './components/scroll-animation'
 import CountdownTimer from './components/countdown-timer'
@@ -19,7 +20,7 @@ const BOOK_COVER = '/images/book-cover.png'
 export default function LandingPage() {
   return (
     <main className="min-h-screen bg-[#fdf6ee]">
-      <WhatsAppWidget />
+      {/* <WhatsAppWidget /> */}
       <FBTrackView />
 
       {/* Hook Bar */}
