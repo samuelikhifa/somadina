@@ -353,14 +353,7 @@ export default function DesiredAgainPage() {
           </div>
         </section>
 
-        {/* ══ PRIVACY ═══════════════════════════════════════════ */}
-        <div style={{ background:"#F0F9F5", border:"1px solid #9FE1CB", borderRadius:12, padding:"16px 20px", margin:"0 24px 0", display:"flex", gap:12, alignItems:"flex-start" }}>
-          <span style={{ fontSize:22, flexShrink:0 }}>🔒</span>
-          <div>
-            <h4 style={{ fontSize:13, fontWeight:700, color:"#0F6E56", marginBottom:4 }}>Your privacy is completely protected</h4>
-            <p style={{ fontSize:12, color:"#085041", lineHeight:1.5 }}>100% discreet digital purchase. It will appear as a neutral name on your bank statement. Nobody will know what you bought — this is your private journey.</p>
-          </div>
-        </div>
+       
 
         {/* ══ PRICING ═══════════════════════════════════════════ */}
         <section id="pricing" className="da-pricing">
