@@ -1,630 +1,412 @@
-import Image from 'next/image'
-import {
-  Heart, Shield, Sparkles, BookOpen, Star, CheckCircle,
-  Gift, Lock, Users, Flame, ArrowRight, Eye, Zap, Crown,
-  Apple, Sun, MessageCircle
-} from 'lucide-react'
-import LeadCaptureForm from './components/lead-capture-form'
+"use client";
 
-import FAQAccordion from './components/faq-accordion'
-// import WhatsAppWidget from './components/whatsapp-widget'
-import CTAButton from './components/cta-button'
-import ScrollAnimate from './components/scroll-animation'
-import CountdownTimer from './components/countdown-timer'
-import FBTrackView from './components/fb-track-view'
+// ─────────────────────────────────────────────────────────────────
+//  Desired Again — Rebranded Landing Page
+//  ✅ Fully responsive: proper desktop wide layout + mobile
+//  ✅ CTA buttons → checkout URL (replace CHECKOUT_URL below)
+//  ✅ Facebook Pixel ID: 271502917879217 — ViewContent on load
+// ─────────────────────────────────────────────────────────────────
 
-const SELAR_URL = 'https://selar.com/desired'
-const HERO_IMAGE = 'https://cdn.abacus.ai/images/f9e6c5ae-3ce4-46cc-b4aa-2f37a7c96dd7.png'
-const BOOK_COVER = '/images/book-cover.png'
+import { useEffect } from "react";
 
-export default function LandingPage() {
+const CHECKOUT_URL = "https://selar.co/YOUR-PRODUCT-LINK-HERE"; // ← paste your Selar / Paystack link here
+const FB_PIXEL_ID  = "271502917879217";
+
+export default function DesiredAgainPage() {
+
+  // ── Facebook Pixel: fires ViewContent when page loads ──────────
+  useEffect(() => {
+    // Inject the base pixel script once
+    if (typeof window === "undefined") return;
+
+    (function (f: Window & typeof globalThis, b: Document, e: string, v: string) {
+      type FbqFn = {
+        (...args: unknown[]): void;
+        callMethod?: (...args: unknown[]) => void;
+        queue: unknown[];
+        loaded: boolean;
+        version: string;
+        push: (...args: unknown[]) => void;
+      };
+
+      if ((f as unknown as Record<string, unknown>).fbq) return;
+
+      const n: FbqFn = Object.assign(
+        function (...args: unknown[]) {
+          n.callMethod ? n.callMethod(...args) : n.queue.push(args);
+        },
+        { queue: [] as unknown[], loaded: true, version: "2.0", push: (...a: unknown[]) => n.queue.push(a) }
+      );
+
+      (f as unknown as Record<string, unknown>).fbq = n;
+      if (!(f as unknown as Record<string, unknown>)._fbq) (f as unknown as Record<string, unknown>)._fbq = n;
+
+      const s = b.createElement(e) as HTMLScriptElement;
+      s.async = true;
+      s.src = v;
+      const t = b.getElementsByTagName(e)[0];
+      t.parentNode?.insertBefore(s, t);
+    })(window, document, "script", "https://connect.facebook.net/en_US/fbevents.js");
+
+    const fbq = (window as unknown as Record<string, unknown>).fbq as (...a: unknown[]) => void;
+    fbq("init", FB_PIXEL_ID);
+    fbq("track", "PageView");
+
+    // ViewContent — presale page event
+    fbq("track", "ViewContent", {
+      content_name:     "Desired Again After 40 — Presale",
+      content_category: "Digital Product / Relationship",
+      content_ids:      ["desired-again-after-40"],
+      content_type:     "product",
+      currency:         "NGN",
+      value:            4500,
+    });
+  }, []);
+
+  const goToCheckout = () => {
+    // Fire InitiateCheckout before leaving
+    const fbq = (window as unknown as Record<string, unknown>).fbq as ((...a: unknown[]) => void) | undefined;
+    if (fbq) {
+      fbq("track", "InitiateCheckout", {
+        content_name: "Desired Again After 40",
+        currency:     "NGN",
+        value:        4500,
+        num_items:    1,
+      });
+    }
+    window.open(CHECKOUT_URL, "_blank");
+  };
+
+  const scrollToPricing = () => {
+    document.getElementById("pricing")?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  const painPoints = [
+    "You don't feel as excited or alive in your body as you used to — and it scares you.",
+    "Your partner feels distant and you can feel the space between you growing wider every week.",
+    "You've tried talking about it but the conversation never goes anywhere, and the silence gets louder.",
+    "Deep down you wonder: \"Is this just how it is now? Is this it for me?\"",
+  ];
+
+  const insideItems = [
+    "How to naturally awaken your desire again — without medication or awkward doctor visits",
+    "Why your body changed after 40 and exactly how to work with it, not against it",
+    "Simple daily practices that rebuild your confidence from the inside out",
+    "How to close the emotional and physical distance with your partner — without it feeling forced",
+    "What men over 40 actually need — and how to give it without losing yourself in the process",
+  ];
+
+  const testimonials = [
+    { text: "\"Aunty Gracee, I don't even know what to say. Thank you ma. I was beginning to have serious problems with my husband regarding our sexual life. But after reading this everything just made sense. God bless you ohhhh.\"", name: "Chinelo", detail: "49 years old", initial: "C" },
+    { text: "\"I got the book and was sceptical. I followed the steps like my life depended on it and in less than a month I can clearly feel and enjoy the difference. Me and my husband have been enjoying the new me.\"", name: "Nididi", detail: "47 years old · Owerri", initial: "N" },
+    { text: "\"All the way from Accra, Ghana. My sister if you are reading this testimonial — just buy the book. That thing you thought was a big deal, Madam Gracee dealt with it. God bless you.\"", name: "Ama", detail: "45 years old · Accra, Ghana", initial: "A" },
+  ];
+
+  const bonuses = [
+    { code: "B1", name: "The 7-Day Desire Reset Plan", desc: "Reignite your body and confidence in just one week with a simple daily plan anyone can follow" },
+    { code: "B2", name: "What Men Secretly Want After 40", desc: "Understand his mind and bring back his attention effortlessly — without playing games" },
+    { code: "B3", name: "Bedroom Confidence Scripts", desc: "Know exactly what to say and do so every moment feels natural — zero awkwardness" },
+    { code: "B4", name: "Libido-Boosting Foods & Natural Remedies", desc: "Support your body, balance your hormones and increase your desire naturally — starting today" },
+  ];
+
+  const valueStack = [
+    ["Main Guide: How To Feel Desired Again After 40", "₦10,000"],
+    ["Bonus 1: 7-Day Desire Reset Plan", "₦5,000"],
+    ["Bonus 2: What Men Secretly Want After 40", "₦5,000"],
+    ["Bonus 3: Bedroom Confidence Scripts", "₦5,000"],
+    ["Bonus 4: Libido-Boosting Foods & Remedies", "₦5,000"],
+  ];
+
   return (
-    <main className="min-h-screen bg-[#fdf6ee]">
-      {/* <WhatsAppWidget /> */}
-      <FBTrackView />
+    <>
+      <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=Lato:wght@300;400;700&display=swap" rel="stylesheet" />
 
-      {/* Hook Bar */}
-      <div className="bg-[#2b1a10] text-[#fdf6ee] py-2.5 px-4 text-center text-sm">
-        <p className="max-w-3xl mx-auto">
-          🔥 <span className="text-[#c9973a] font-semibold">Over 1,000+ women</span> have already reclaimed their intimacy.
-          Will you be next?
-        </p>
-      </div>
+      {/* Facebook Pixel — noscript fallback */}
+      <noscript>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          height="1" width="1" style={{ display: "none" }}
+          src={`https://www.facebook.com/tr?id=${FB_PIXEL_ID}&ev=PageView&noscript=1`}
+          alt=""
+        />
+      </noscript>
 
-      {/* Hero Section */}
-      <section className="relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-b from-[#fdf6ee] via-[#f5e6d0] to-[#fdf6ee]" />
-        <div className="relative max-w-6xl mx-auto px-4 py-12 md:py-20">
-          <div className="grid md:grid-cols-2 gap-8 md:gap-12 items-center">
-            {/* Left: Copy */}
-            <div className="order-2 md:order-1 space-y-6">
-              <div className="inline-flex items-center gap-2 bg-[#c9973a]/10 text-[#c9973a] px-4 py-1.5 rounded-full text-xs font-semibold">
-                <Sparkles className="w-4 h-4" />
-                The Book Every Woman Over 40 Needs
-              </div>
-              <h1 className="font-display text-3xl md:text-4xl lg:text-5xl font-bold text-[#2b1a10] leading-tight tracking-tight">
-                How to Feel{' '}
-                <span className="text-[#b5534e]">Desired, Wet & Excited</span>{' '}
-                Again After 40
-              </h1>
-              <p className="text-[#2b1a10]/80 text-base md:text-lg font-semibold">
-                Even If You&apos;ve Lost Your Drive and Your Partner Is Pulling Away
-              </p>
-              <p className="text-[#2b1a10]/70 text-base md:text-lg leading-relaxed">
-                A simple, private guide to help you feel comfortable in your body again,
-                enjoy intimacy, and bring back connection in your relationship.
-              </p>
-              <p className="text-[#b5534e] font-semibold text-sm md:text-base">
-                No shame. No pressure. Just real help that works.
-              </p>
-              <div className="flex flex-wrap gap-3 text-sm text-[#2b1a10]/60">
-                {[
-                  { icon: Lock, text: '100% Private' },
-                  { icon: BookOpen, text: 'Instant Download' },
-                  { icon: Shield, text: '30-Day Guarantee' },
-                ].map((item: any, i: number) => (
-                  <div key={i} className="flex items-center gap-1.5">
-                    <item.icon className="w-4 h-4 text-[#c9973a]" />
-                    <span>{item?.text ?? ''}</span>
-                  </div>
-                ))}
-              </div>
-              <div className="pt-2">
-                <CTAButton size="large" url={SELAR_URL} />
-              </div>
-            </div>
+      <style>{`
+        /* Fonts */
+        body { font-family: 'Lato', sans-serif; }
+        .serif { font-family: 'Playfair Display', Georgia, serif; }
 
-            {/* Right: Book + Hero Image */}
-            <div className="order-1 md:order-2 flex justify-center">
-              <div className="relative">
-                <div className="relative w-56 md:w-72 aspect-[2/3] rounded-lg overflow-hidden" style={{ boxShadow: '0 25px 50px -12px rgba(43,26,16,0.25)' }}>
-                  <Image
-                    src={BOOK_COVER}
-                    alt="E-book cover: How to Feel Desired, Wet and Excited Again After 40 - intimate guide for women"
-                    fill
-                    className="object-cover"
-                    priority
-                    sizes="(max-width: 768px) 224px, 288px"
-                  />
-                </div>
-                {/* Decorative badge */}
-                <div className="absolute -bottom-3 -right-3 md:-bottom-4 md:-right-4 bg-[#b5534e] text-white rounded-full w-16 h-16 md:w-20 md:h-20 flex flex-col items-center justify-center text-center" style={{ boxShadow: '0 8px 20px rgba(181,83,78,0.3)' }}>
-                  <span className="text-[10px] md:text-xs font-semibold leading-none">Only</span>
-                  <span className="text-sm md:text-lg font-bold leading-none">₦4,500</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+        /* Shimmer CTA */
+        .btn-rose {
+          background: linear-gradient(105deg, #D4537E 0%, #993556 40%, #ED93B1 65%, #D4537E 100%);
+          background-size: 200% auto;
+          animation: shimmer 2.8s linear infinite;
+          color: #fff;
+          border: none;
+          cursor: pointer;
+          font-family: 'Lato', sans-serif;
+          font-weight: 700;
+          letter-spacing: 0.5px;
+          border-radius: 9999px;
+          transition: transform 0.2s ease, box-shadow 0.2s ease;
+          display: block;
+        }
+        .btn-rose:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 10px 30px rgba(212,83,126,0.45);
+        }
+        @keyframes shimmer {
+          0%   { background-position: -200% center; }
+          100% { background-position:  200% center; }
+        }
 
-      {/* Social Proof Bar */}
-      <ScrollAnimate>
-        <div className="bg-[#2b1a10] py-6 px-4">
-          <div className="max-w-4xl mx-auto flex flex-wrap items-center justify-center gap-6 md:gap-10 text-[#fdf6ee]">
-            {[
-              { num: '✔', label: 'Instant Download' },
-              { num: '✔', label: '100% Private' },
-              { num: '✔', label: 'Start Today' },
-            ].map((stat: any, i: number) => (
-              <div key={i} className="text-center">
-                <div className="text-[#c9973a] font-bold text-xl md:text-2xl font-display">{stat?.num ?? ''}</div>
-                <div className="text-xs text-[#fdf6ee]/60">{stat?.label ?? ''}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </ScrollAnimate>
+        /* ── Mobile base ── */
+        .da-page { background: #fff; color: #2C2C2A; line-height: 1.7; font-size: 16px; }
+        .da-container { width: 100%; padding-left: 24px; padding-right: 24px; }
 
-      {/* Problem Section */}
-      <section className="py-16 md:py-20 px-4 bg-[#fdf6ee]">
-        <div className="max-w-3xl mx-auto">
-          <ScrollAnimate>
-            <div className="text-center mb-10">
-              <p className="text-[#b5534e] font-semibold text-sm uppercase tracking-wider mb-3">Does This Feel Like You?</p>
-              <h2 className="font-display text-2xl md:text-3xl font-bold text-[#2b1a10] tracking-tight">
-                You Used to Feel <span className="text-[#b5534e]">Alive</span>...
-              </h2>
-            </div>
-          </ScrollAnimate>
+        /* hero */
+        .da-hero { padding: 48px 24px 40px; text-align: center; position: relative; overflow: hidden;
+          background: linear-gradient(160deg, hsl(220,40%,7%) 0%, hsl(345,55%,19%) 55%, hsl(340,50%,27%) 100%);
+          color: #fff; }
+        .da-hero h1 { font-size: 28px; }
+        .da-hero .hero-sub { font-size: 15px; max-width: 100%; }
+        .da-hero .btn-rose { width: 100%; padding: 16px 32px; font-size: 16px; margin: 0 auto 12px; }
 
-          <div className="space-y-4">
-            {[
-              'You don\'t feel the same desire anymore',
-              'Your body feels dry or uncomfortable',
-              'You avoid closeness because it doesn\'t feel good',
-              'Your partner seems distant or less interested',
-              'You feel confused, worried, or even ashamed',
-            ].map((pain: string, i: number) => (
-              <ScrollAnimate key={i} delay={i * 80}>
-                <div className="flex items-start gap-3 bg-white/50 rounded-xl px-5 py-4" style={{ boxShadow: 'var(--shadow-sm)' }}>
-                  <span className="text-[#b5534e] mt-0.5 text-lg">😔</span>
-                  <p className="text-[#2b1a10]/80 text-sm md:text-base">{pain ?? ''}</p>
-                </div>
-              </ScrollAnimate>
-            ))}
-          </div>
+        /* pain+truth stacked */
+        .da-pain-truth { display: flex; flex-direction: column; }
+        .da-pain  { background: #fff; padding: 32px 24px; }
+        .da-truth { background: linear-gradient(135deg, hsl(345,55%,19%), hsl(340,50%,27%));
+          padding: 28px 24px; color: #fff; }
 
-          {/* Inner questions */}
-          <ScrollAnimate delay={150}>
-            <div className="mt-8 bg-[#f5e6d0]/60 rounded-xl px-6 py-5" style={{ boxShadow: 'var(--shadow-sm)' }}>
-              <p className="text-[#2b1a10]/70 text-sm md:text-base font-semibold mb-3">Sometimes you even ask yourself:</p>
-              <ul className="space-y-2">
-                {[
-                  '"What is happening to me?"',
-                  '"Am I getting too old for this?"',
-                  '"Will things ever go back to normal?"',
-                ].map((q: string, i: number) => (
-                  <li key={i} className="flex items-start gap-2 text-[#b5534e] text-sm md:text-base italic">
-                    <span className="mt-0.5">💭</span>
-                    <span>{q}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </ScrollAnimate>
+        /* product section */
+        .da-product { padding: 36px 24px; background: #FDF6F9; text-align: center; }
+        .da-inside-grid { display: grid; grid-template-columns: 1fr; gap: 10px; text-align: left; margin-top: 20px; }
 
-          {/* You Are Not Alone */}
-          <ScrollAnimate delay={200}>
-            <div className="mt-10 text-center">
-              <h3 className="font-display text-xl md:text-2xl font-bold text-[#2b1a10] mb-4">
-                You Are <span className="text-[#c9973a]">Not Alone</span>
-              </h3>
-              <p className="text-[#2b1a10]/70 text-base md:text-lg leading-relaxed mb-4">
-                Many women in their 40s, 50s, and 60s are going through this quietly —
-                and frankly don&apos;t speak about it.
-              </p>
-              <p className="text-[#2b1a10]/80 text-base md:text-lg font-semibold">
-                But the truth is: <span className="text-[#b5534e]">Nothing is wrong with you.</span>{' '}
-                Your body just needs a new approach.
-              </p>
-            </div>
-          </ScrollAnimate>
-        </div>
-      </section>
+        /* testimonials */
+        .da-testi { padding: 36px 24px; background: #fff; }
+        .da-testi-grid { display: grid; grid-template-columns: 1fr; gap: 16px; }
 
-      {/* Relatable Story Section */}
-      <section className="py-16 md:py-20 px-4 bg-[#f5e6d0]/40">
-        <div className="max-w-3xl mx-auto">
-          <ScrollAnimate>
-            <div className="text-center mb-10">
-              <p className="text-[#c9973a] font-semibold text-sm uppercase tracking-wider mb-3">A Story You May Recognise</p>
-              <h2 className="font-display text-2xl md:text-3xl font-bold text-[#2b1a10] tracking-tight">
-                I Know Exactly <span className="text-[#b5534e]">How You Feel</span>
-              </h2>
-            </div>
-          </ScrollAnimate>
+        /* bonuses */
+        .da-bonuses { padding: 36px 24px; background: #FDF6F9; }
+        .da-bonuses-grid { display: grid; grid-template-columns: 1fr; gap: 14px; margin-top: 20px; }
 
-          <ScrollAnimate delay={100}>
-            <div className="bg-white/70 rounded-2xl px-6 md:px-10 py-8 md:py-10 space-y-5 text-[#2b1a10]/75 text-sm md:text-base leading-relaxed" style={{ boxShadow: 'var(--shadow-md)' }}>
-              <p>
-                Night after night I used to lie awake wondering what happened to me — what happened
-                to the woman who was <span className="text-[#2b1a10] font-semibold">wanted, passionate, sexy and alive.</span>
-              </p>
-              <p>
-                Ever since I got into this menopause phase, my body changed. My mood, my drive —
-                they disappeared. From sharing passionate moments with my husband to polite hugs,
-                separate sides of the bed, awkward silences, routine discussions.
-              </p>
-              <p>
-                I felt ashamed and unwanted. Some nights I would cry myself to sleep.
-              </p>
-              <p>
-                But I wasn&apos;t going to settle for this — <span className="text-[#b5534e] font-semibold">definitely not at 44.</span> So I went
-                into research, seeking solutions to my problem.
-              </p>
-              <p className="font-semibold text-[#2b1a10]">
-                If you are reading this, it means I found a solution — and the fire is flaming
-                hot in my bedroom. 🔥
-              </p>
-              <p>
-                If I felt ashamed of my problem, I am sure many women feel so too.
-                And <span className="text-[#b5534e] font-semibold">I see you and hear you.</span> You want to feel alive again?
-                Everything I learnt and practised has been written specially for you.
-              </p>
-            </div>
-          </ScrollAnimate>
+        /* pricing */
+        .da-pricing { padding: 48px 24px; text-align: center;
+          background: linear-gradient(160deg, hsl(220,40%,7%), hsl(345,55%,19%)); color: #fff; }
+        .da-pricing-inner { max-width: 100%; margin: 0 auto; }
+        .da-pricing .btn-rose { width: 100%; padding: 18px 32px; font-size: 17px; margin-bottom: 12px; }
 
-          <ScrollAnimate delay={200}>
-            <div className="mt-10 flex justify-center">
-              <CTAButton size="large" url={SELAR_URL} />
-            </div>
-          </ScrollAnimate>
-        </div>
-      </section>
+        /* final nudge */
+        .da-final { padding: 36px 24px; text-align: center; background: #fff; }
+        .da-final .btn-rose { width: 100%; max-width: 420px; padding: 16px 32px; font-size: 16px; margin: 0 auto; }
 
-      {/* Solution Section */}
-      <section className="py-16 md:py-20 px-4 bg-[#fdf6ee]">
-        <div className="max-w-3xl mx-auto">
-          <ScrollAnimate>
-            <div className="text-center mb-10">
-              <p className="text-[#c9973a] font-semibold text-sm uppercase tracking-wider mb-3">The Solution</p>
-              <h2 className="font-display text-2xl md:text-3xl font-bold text-[#2b1a10] tracking-tight mb-4">
-                Your Simple Step-by-Step Guide to{' '}
-                <span className="text-[#b5534e]">Feeling Like Yourself Again</span>
-              </h2>
-              <p className="text-[#2b1a10]/70 text-base md:text-lg leading-relaxed">
-                This guide was created to help you understand your body and gently bring
-                things back — without stress or embarrassment.
-              </p>
-            </div>
-          </ScrollAnimate>
+        /* ── Desktop overrides (768px+) ── */
+        @media (min-width: 768px) {
+          .da-container { max-width: 1100px; margin: 0 auto; }
 
-          <div className="space-y-3 mb-10">
-            {[
-              'Why your body has changed (in simple terms)',
-              'How to naturally improve comfort and wetness',
-              'How to rebuild desire without forcing yourself',
-              'How to feel confident and attractive again',
-              'How to reconnect with your partner calmly',
-              'A simple 30-day plan to guide you step by step',
-            ].map((item: string, i: number) => (
-              <ScrollAnimate key={i} delay={i * 80}>
-                <div className="flex items-start gap-3 bg-white/60 rounded-xl px-5 py-4" style={{ boxShadow: 'var(--shadow-sm)' }}>
-                  <CheckCircle className="w-5 h-5 text-[#c9973a] flex-shrink-0 mt-0.5" />
-                  <p className="text-[#2b1a10]/80 text-sm md:text-base">{item ?? ''}</p>
-                </div>
-              </ScrollAnimate>
-            ))}
-          </div>
-        </div>
-      </section>
+          /* hero */
+          .da-hero { padding: 90px 60px 80px; }
+          .da-hero h1 { font-size: 46px; }
+          .da-hero .hero-sub { font-size: 18px; max-width: 640px; margin-left: auto; margin-right: auto; }
+          .da-hero .btn-rose { max-width: 420px; font-size: 17px; }
 
-      {/* What Will Change For You */}
-      <section className="py-16 md:py-20 px-4 bg-[#f5e6d0]/40">
-        <div className="max-w-4xl mx-auto">
-          <ScrollAnimate>
-            <div className="text-center mb-12">
-              <p className="text-[#c9973a] font-semibold text-sm uppercase tracking-wider mb-3">The Transformation</p>
-              <h2 className="font-display text-2xl md:text-3xl font-bold text-[#2b1a10] tracking-tight mb-4">
-                What Will <span className="text-[#c9973a]">Change</span> For You
-              </h2>
-              <p className="text-[#2b1a10]/70 text-base md:text-lg">Imagine if you could...</p>
-            </div>
-          </ScrollAnimate>
+          /* pain+truth side by side */
+          .da-pain-truth { flex-direction: row; }
+          .da-pain  { flex: 1; padding: 56px 56px; }
+          .da-truth { flex: 1; padding: 56px 56px; display: flex; align-items: center; }
 
-          <div className="grid md:grid-cols-2 gap-5">
-            {[
-              { icon: Heart, title: 'Feel Comfortable Again', desc: 'Feel comfortable and relaxed in your body — no more tension, dryness, or dread around intimacy.' },
-              { icon: Sparkles, title: 'Enjoy Closeness', desc: 'Enjoy closeness without pain or stress, and look forward to intimate moments again.' },
-              { icon: Eye, title: 'Feel Confident & Attractive', desc: 'Feel confident and attractive again — and see yourself the way your partner used to.' },
-              { icon: Flame, title: 'Stop Avoiding Intimacy', desc: 'Stop avoiding intimacy and start welcoming it as something beautiful and yours again.' },
-              { icon: Users, title: 'Feel Emotionally Connected', desc: 'Feel emotionally connected again and bring that warmth and closeness back to your relationship.' },
-              { icon: Zap, title: 'Stop Feeling Broken', desc: 'Stop feeling like something is wrong with you — because nothing is. You just needed the right guide.' },
-            ].map((item: any, i: number) => (
-              <ScrollAnimate key={i} delay={i * 100}>
-                <div className="bg-white/70 rounded-xl p-5 md:p-6 hover:bg-white transition-colors duration-200" style={{ boxShadow: 'var(--shadow-sm)' }}>
-                  <div className="w-10 h-10 rounded-lg bg-[#c9973a]/10 flex items-center justify-center mb-3">
-                    <item.icon className="w-5 h-5 text-[#c9973a]" />
-                  </div>
-                  <h3 className="font-display font-bold text-[#2b1a10] mb-2">{item?.title ?? ''}</h3>
-                  <p className="text-sm text-[#2b1a10]/65 leading-relaxed">{item?.desc ?? ''}</p>
-                </div>
-              </ScrollAnimate>
-            ))}
-          </div>
+          /* product */
+          .da-product { padding: 72px 60px; }
+          .da-inside-grid { grid-template-columns: 1fr 1fr; gap: 14px; }
 
-          <ScrollAnimate delay={300}>
-            <div className="mt-10 text-center bg-white/60 rounded-2xl px-6 py-6" style={{ boxShadow: 'var(--shadow-sm)' }}>
-              <p className="text-[#2b1a10] text-base md:text-lg font-semibold leading-relaxed">
-                This Is Not About Becoming Someone Else —{' '}
-                <span className="text-[#b5534e]">it is simply about becoming yourself again.</span>
-              </p>
-              <p className="text-[#2b1a10]/65 text-sm md:text-base mt-2">
-                Calm, confident, and comfortable in your own body.
-              </p>
-            </div>
-          </ScrollAnimate>
-        </div>
-      </section>
+          /* testimonials */
+          .da-testi { padding: 72px 60px; }
+          .da-testi-grid { grid-template-columns: 1fr 1fr 1fr; }
 
-      {/* What's Inside the Guide */}
-      <section className="py-16 md:py-20 px-4 bg-[#fdf6ee]">
-        <div className="max-w-4xl mx-auto">
-          <ScrollAnimate>
-            <div className="text-center mb-12">
-              <p className="text-[#c9973a] font-semibold text-sm uppercase tracking-wider mb-3">Inside the Guide</p>
-              <h2 className="font-display text-2xl md:text-3xl font-bold text-[#2b1a10] tracking-tight">
-                Here&apos;s What You&apos;ll <span className="text-[#c9973a]">Discover</span> Inside
-              </h2>
-            </div>
-          </ScrollAnimate>
+          /* bonuses */
+          .da-bonuses { padding: 72px 60px; }
+          .da-bonuses-grid { grid-template-columns: 1fr 1fr; }
 
-          <div className="grid md:grid-cols-2 gap-5">
-            {[
-              { icon: BookOpen, title: 'Understanding Your Body Again', desc: 'In simple terms — why things changed and what your body is telling you.' },
-              { icon: Flame, title: 'Reigniting Your Desire', desc: 'Gentle, practical ways to wake up your natural drive — without pressure.' },
-              { icon: Heart, title: 'Restoring Comfort & Wetness', desc: 'Practical steps that actually work to bring back comfort and sensitivity.' },
-              { icon: Sparkles, title: 'Rebuilding Your Confidence', desc: 'Feel good about yourself again — your body, your beauty, your worth.' },
-              { icon: Users, title: 'When He Pulls Away', desc: 'What to do calmly and confidently when your partner becomes distant.' },
-              { icon: Zap, title: '30-Day Intimacy Comeback Plan', desc: 'A clear, step-by-step plan so you always know exactly what to do next.' },
-            ].map((item: any, i: number) => (
-              <ScrollAnimate key={i} delay={i * 100}>
-                <div className="bg-white/70 rounded-xl p-5 md:p-6 hover:bg-white transition-colors duration-200" style={{ boxShadow: 'var(--shadow-sm)' }}>
-                  <div className="w-10 h-10 rounded-lg bg-[#c9973a]/10 flex items-center justify-center mb-3">
-                    <item.icon className="w-5 h-5 text-[#c9973a]" />
-                  </div>
-                  <h3 className="font-display font-bold text-[#2b1a10] mb-2">{item?.title ?? ''}</h3>
-                  <p className="text-sm text-[#2b1a10]/65 leading-relaxed">{item?.desc ?? ''}</p>
-                </div>
-              </ScrollAnimate>
-            ))}
-          </div>
-        </div>
-      </section>
+          /* pricing */
+          .da-pricing { padding: 80px 60px; }
+          .da-pricing-inner { max-width: 680px; }
 
-      {/* Lead Capture Section */}
-      <section id="get-guide" className="py-16 md:py-20 px-4 bg-[#fdf6ee]">
-        <div className="max-w-xl mx-auto">
-          <ScrollAnimate>
-            <div className="text-center mb-8">
-              <p className="text-[#b5534e] font-semibold text-sm uppercase tracking-wider mb-3">Don&apos;t Miss Out</p>
-              <h2 className="font-display text-2xl md:text-3xl font-bold text-[#2b1a10] tracking-tight mb-3">
-                Ready to Feel <span className="text-[#b5534e]">Alive</span> Again?
-              </h2>
-              <p className="text-[#2b1a10]/60 text-sm">
-                Join thousands of women who are quietly transforming their intimate lives
-              </p>
-            </div>
-          </ScrollAnimate>
-          <ScrollAnimate delay={100}>
-            <LeadCaptureForm />
-          </ScrollAnimate>
-        </div>
-      </section>
+          /* final nudge */
+          .da-final { padding: 72px 60px; }
+        }
+      `}</style>
 
-      {/* Offer Stack */}
-      <section className="py-16 md:py-20 px-4 bg-[#2b1a10]">
-        <div className="max-w-3xl mx-auto text-center">
-          <ScrollAnimate>
-            <p className="text-[#c9973a] font-semibold text-sm uppercase tracking-wider mb-3">Complete Package</p>
-            <h2 className="font-display text-2xl md:text-3xl font-bold text-[#fdf6ee] tracking-tight mb-10">
-              Everything You Get Today
-            </h2>
-          </ScrollAnimate>
+      <div className="da-page">
 
-          <div className="space-y-4 mb-10">
-            {[
-              { icon: BookOpen, title: 'The Complete Guide', value: '₦25,000', desc: 'Every technique, exercise, and secret — organized into easy daily steps including the 30-Day Intimacy Comeback Plan' },
-              { icon: Apple, title: 'BONUS: Foods That Support Your Body & Desire', value: '₦10,000', desc: 'Simple, everyday foods that naturally support your hormones, wetness, and energy levels' },
-              { icon: Sun, title: 'BONUS: Simple Daily Self-Care Routine', value: '₦8,000', desc: 'A gentle morning-to-evening routine that keeps you feeling good in your body every single day' },
-              { icon: Gift, title: 'BONUS: Confidence Affirmations for Women 40+', value: '₦15,000', desc: 'Powerful, culturally rooted affirmations to help you reclaim your sense of beauty, worth, and desire' },
-            ].map((item: any, i: number) => (
-              <ScrollAnimate key={i} delay={i * 100}>
-                <div className="flex items-start gap-4 bg-[#fdf6ee]/5 rounded-xl px-5 py-4 text-left">
-                  <div className="w-10 h-10 rounded-lg bg-[#c9973a]/20 flex items-center justify-center flex-shrink-0">
-                    <item.icon className="w-5 h-5 text-[#c9973a]" />
-                  </div>
-                  <div className="flex-1">
-                    <div className="flex items-center justify-between gap-2 flex-wrap">
-                      <h3 className="font-display font-bold text-[#fdf6ee] text-sm md:text-base">{item?.title ?? ''}</h3>
-                      <span className="text-[#fdf6ee]/40 line-through text-sm">{item?.value ?? ''}</span>
-                    </div>
-                    <p className="text-[#fdf6ee]/50 text-xs md:text-sm mt-1">{item?.desc ?? ''}</p>
-                  </div>
-                </div>
-              </ScrollAnimate>
-            ))}
-          </div>
+        {/* ══ HERO ══════════════════════════════════════════════ */}
+        <section className="da-hero">
+          {/* orbs */}
+          <span style={{ position:"absolute", top:-60, right:-60, width:200, height:200, borderRadius:"50%", background:"rgba(212,83,126,0.14)", display:"block", pointerEvents:"none" }} />
+          <span style={{ position:"absolute", bottom:-40, left:-40, width:150, height:150, borderRadius:"50%", background:"rgba(212,83,126,0.10)", display:"block", pointerEvents:"none" }} />
 
-          <ScrollAnimate delay={200}>
-            <div className="bg-[#c9973a]/10 border border-[#c9973a]/30 rounded-xl p-6 md:p-8 mb-8">
-              <p className="text-[#fdf6ee]/60 text-sm mb-1">Total Value: <span className="line-through">₦58,000</span></p>
-              <div className="flex items-center justify-center gap-3 mb-2">
-                <span className="text-[#fdf6ee]/40 line-through text-2xl">₦25,000</span>
-                <span className="text-[#c9973a] font-bold text-4xl md:text-5xl font-display">₦4,500</span>
-              </div>
-              <p className="text-[#c9973a] text-sm font-semibold mb-4">Launch Week Special — Save 62%</p>
-              <CountdownTimer />
-            </div>
-          </ScrollAnimate>
+          <p style={{ fontSize:11, letterSpacing:3, textTransform:"uppercase", color:"#ED93B1", fontWeight:700, marginBottom:16 }}>
+            For Nigerian Women Over 40
+          </p>
+          <h1 className="serif" style={{ lineHeight:1.3, fontWeight:700, marginBottom:16 }}>
+            You Haven't Lost It.{" "}
+            <em style={{ color:"#ED93B1" }}>You Just Haven't Been Shown How to Unlock It Again.</em>
+          </h1>
+          <p className="hero-sub" style={{ color:"rgba(255,255,255,0.82)", marginBottom:28, lineHeight:1.65 }}>
+            The private, step-by-step guide helping women over 40 feel desired, alive and deeply connected again — even if you feel like a stranger in your own body.
+          </p>
+          <button className="btn-rose" onClick={scrollToPricing}>
+            Yes, I Want to Feel Desired Again →
+          </button>
+          <p style={{ fontSize:12, color:"rgba(255,255,255,0.50)" }}>🔒 100% private &amp; discreet. Instant digital delivery.</p>
+        </section>
 
-          <ScrollAnimate delay={300}>
-            <CTAButton text="Get Access Now — ₦4,500" size="large" className="w-auto mx-auto" url={SELAR_URL} />
-          </ScrollAnimate>
-        </div>
-      </section>
-
-      {/* Who It's For */}
-      <section className="py-16 md:py-20 px-4 bg-[#fdf6ee]">
-        <div className="max-w-3xl mx-auto">
-          <ScrollAnimate>
-            <div className="text-center mb-10">
-              <p className="text-[#c9973a] font-semibold text-sm uppercase tracking-wider mb-3">Is This For You?</p>
-              <h2 className="font-display text-2xl md:text-3xl font-bold text-[#2b1a10] tracking-tight">
-                This Guide Is <span className="text-[#c9973a]">Perfect</span> For You If...
-              </h2>
-            </div>
-          </ScrollAnimate>
-
-          <div className="grid md:grid-cols-2 gap-4">
-            {[
-              'You\'re a woman over 40 experiencing changes in your desire or body',
-              'You want to feel sexy, confident, and wanted again',
-              'Your relationship needs a spark — and you\'re ready to light it',
-              'You\'re tired of feeling "broken" and want natural solutions',
-              'You want practical steps, not vague advice',
-              'You value your privacy and want a discreet solution',
-            ].map((item: string, i: number) => (
-              <ScrollAnimate key={i} delay={i * 80}>
-                <div className="flex items-start gap-3 bg-white/60 rounded-xl px-5 py-4" style={{ boxShadow: 'var(--shadow-sm)' }}>
-                  <CheckCircle className="w-5 h-5 text-[#c9973a] flex-shrink-0 mt-0.5" />
-                  <p className="text-[#2b1a10]/80 text-sm">{item ?? ''}</p>
-                </div>
-              </ScrollAnimate>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Hero Image + Author Section */}
-      <section className="py-16 md:py-20 px-4 bg-[#f5e6d0]/40">
-        <div className="max-w-4xl mx-auto">
-          <div className="grid md:grid-cols-5 gap-8 items-center">
-            <div className="md:col-span-2 flex justify-center">
-              <ScrollAnimate>
-              <div className="relative w-48 md:w-64 aspect-[3/4] rounded-xl overflow-hidden" style={{ boxShadow: '0 20px 40px rgba(43,26,16,0.15)' }}>
-                  <Image
-                    src={HERO_IMAGE}
-                    alt="Confident African woman in her 40s smiling radiantly - representing the transformation this guide offers"
-                    fill
-                    className="object-cover"
-                    sizes="(max-width: 768px) 192px, 320px"
-                    loading="lazy"
-                  />
-                </div>
-              </ScrollAnimate>
-            </div>
-            <div className="md:col-span-3">
-              <ScrollAnimate delay={100}>
-                <p className="text-[#c9973a] font-semibold text-sm uppercase tracking-wider mb-3">About The Author</p>
-                <h2 className="font-display text-2xl md:text-3xl font-bold text-[#2b1a10] tracking-tight mb-4">
-                  Written By Someone Who <span className="text-[#b5534e]">Understands</span>
-                </h2>
-                <div className="space-y-4 text-[#2b1a10]/70 text-sm md:text-base leading-relaxed">
-                  <p>
-                    This guide was created by a woman who has walked this exact path — from feeling invisible
-                    and disconnected to rediscovering passion, pleasure, and deep connection after 40.
-                  </p>
-                  <p>
-                    Drawing from years of research, personal experience, and conversations with hundreds
-                    of African women, every page is crafted with cultural sensitivity, warmth, and
-                    practical wisdom that actually works.
-                  </p>
-                  <p className="font-semibold text-[#2b1a10] italic">
-                    &ldquo;I wrote this guide because no one was talking about this in a way that felt
-                    real, respectful, and rooted in our experience as African women.&rdquo;
-                  </p>
-                </div>
-              </ScrollAnimate>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Testimonials */}
-      <section className="py-16 md:py-20 px-4 bg-[#fdf6ee]">
-        <div className="max-w-4xl mx-auto">
-          <ScrollAnimate>
-            <div className="text-center mb-10">
-              <p className="text-[#b5534e] font-semibold text-sm uppercase tracking-wider mb-3">Real Stories</p>
-              <h2 className="font-display text-2xl md:text-3xl font-bold text-[#2b1a10] tracking-tight">
-                What <span className="text-[#b5534e]">Women Are Saying</span>
-              </h2>
-            </div>
-          </ScrollAnimate>
-
-          <div className="grid md:grid-cols-3 gap-5">
-            {[
-              {
-                name: 'Adunni O.',
-                location: 'Lagos, Nigeria',
-                stars: 5,
-                text: 'I felt invisible in my marriage after I turned 44. Sex became rare, I was dry and had zero drive. My husband started pulling away and avoiding intimacy — I thought it was just menopause. This book gave me a simple mindset shift and body practices that actually work. Within weeks I felt excited and wet again. My husband noticed these changes and started reaching for me...',
-              },
-              {
-                name: 'Grace M.',
-                location: 'Nairobi, Kenya',
-                stars: 5,
-                text: 'At 52, I thought that part of my life was over. Within two weeks of following the guide, I felt things I hadn\'t felt in years. This is worth every single cent.',
-              },
-              {
-                name: 'Ama K.',
-                location: 'Accra, Ghana',
-                stars: 5,
-                text: 'The "Magnetic Woman" chapter alone changed everything. My partner can\'t keep his hands off me. I feel confident, desired, and truly alive again.',
-              },
-            ].map((review: any, i: number) => (
-              <ScrollAnimate key={i} delay={i * 120}>
-                <div className="bg-white/70 rounded-xl p-5 md:p-6 h-full flex flex-col" style={{ boxShadow: 'var(--shadow-sm)' }}>
-                  <div className="flex gap-0.5 mb-3">
-                    {Array.from({ length: review?.stars ?? 5 }).map((_: any, s: number) => (
-                      <Star key={s} className="w-4 h-4 fill-[#c9973a] text-[#c9973a]" />
-                    ))}
-                  </div>
-                  <p className="text-[#2b1a10]/75 text-sm leading-relaxed flex-1 italic">
-                    &ldquo;{review?.text ?? ''}&rdquo;
-                  </p>
-                  <div className="mt-4 pt-3 border-t border-[#e8b4a0]/20">
-                    <p className="font-display font-bold text-[#2b1a10] text-sm">{review?.name ?? ''}</p>
-                    <p className="text-xs text-[#2b1a10]/50">{review?.location ?? ''}</p>
-                  </div>
-                </div>
-              </ScrollAnimate>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* FAQ Section */}
-      <section id="faq" className="py-16 md:py-20 px-4 bg-[#f5e6d0]/40">
-        <div className="max-w-3xl mx-auto">
-          <ScrollAnimate>
-            <div className="text-center mb-10">
-              <p className="text-[#c9973a] font-semibold text-sm uppercase tracking-wider mb-3">Questions?</p>
-              <h2 className="font-display text-2xl md:text-3xl font-bold text-[#2b1a10] tracking-tight">
-                Frequently Asked <span className="text-[#c9973a]">Questions</span>
-              </h2>
-            </div>
-          </ScrollAnimate>
-          <ScrollAnimate delay={100}>
-            <FAQAccordion />
-          </ScrollAnimate>
-        </div>
-      </section>
-
-      {/* Guarantee Section */}
-      {/* <section className="py-16 md:py-20 px-4 bg-[#fdf6ee]">
-        <div className="max-w-2xl mx-auto text-center">
-          <ScrollAnimate>
-            <div className="bg-white/70 rounded-2xl p-8 md:p-10" style={{ boxShadow: 'var(--shadow-md)' }}>
-              <Shield className="w-14 h-14 mx-auto mb-4 text-[#c9973a]" />
-              <h2 className="font-display text-2xl md:text-3xl font-bold text-[#2b1a10] tracking-tight mb-4">
-                30-Day Money-Back Guarantee
-              </h2>
-              <p className="text-[#2b1a10]/65 text-sm md:text-base leading-relaxed mb-6">
-                Try the entire guide risk-free for 30 days. If you follow the steps and don&apos;t
-                feel a positive shift in your desire, confidence, and intimacy, simply send us a
-                message and we&apos;ll refund every kobo. No questions asked, no hard feelings.
-              </p>
-              <p className="text-[#c9973a] font-semibold text-sm">
-                Your satisfaction is our highest priority.
-              </p>
-            </div>
-          </ScrollAnimate>
-        </div>
-      </section> */}
-
-      {/* Final CTA */}
-      <section className="py-16 md:py-20 px-4 bg-[#2b1a10]">
-        <div className="max-w-2xl mx-auto text-center">
-          <ScrollAnimate>
-            <Crown className="w-10 h-10 mx-auto mb-4 text-[#c9973a]" />
-            <h2 className="font-display text-2xl md:text-3xl font-bold text-[#fdf6ee] tracking-tight mb-4">
-              You Deserve to Feel <span className="text-[#c9973a]">Desired</span> Again
-            </h2>
-            <p className="text-[#fdf6ee]/60 text-sm md:text-base mb-8 max-w-lg mx-auto">
-              Every day you wait is another day of disconnection. Take the first step
-              towards reclaiming your passion, your confidence, and your intimate life.
+        {/* ══ PAIN + TRUTH ══════════════════════════════════════ */}
+        <div className="da-pain-truth">
+          <div className="da-pain">
+            <p style={{ fontSize:14, color:"#5F5E5A", textAlign:"center", marginBottom:20, fontStyle:"italic" }}>
+              "If any of this sounds familiar, this guide was written for you…"
             </p>
-          </ScrollAnimate>
-          <ScrollAnimate delay={100}>
-            <div className="flex flex-col items-center gap-4">
-              <CTAButton text="Buy Now — ₦4,500" size="large" className="w-auto max-w-md mx-auto" url={SELAR_URL} />
-              <p className="text-[#fdf6ee]/40 text-xs text-center">
-                🔒 Secure checkout via Selar · Instant digital delivery · 100% private
+            {painPoints.map((text, i) => (
+              <div key={i} style={{ display:"flex", alignItems:"flex-start", gap:12, marginBottom:12, padding:"13px 15px", background:"#FDF6F9", borderRadius:12, borderLeft:"3px solid #D4537E" }}>
+                <span style={{ fontSize:18, flexShrink:0, marginTop:2 }}>💔</span>
+                <p style={{ fontSize:14, color:"#3C3434", lineHeight:1.5 }}>{text}</p>
+              </div>
+            ))}
+          </div>
+
+          <div className="da-truth">
+            <div>
+              <h2 className="serif" style={{ fontSize:22, color:"#fff", marginBottom:14, fontWeight:700 }}>
+                Here's what nobody is telling you
+              </h2>
+              <p style={{ fontSize:14, color:"rgba(255,255,255,0.85)", lineHeight:1.65 }}>
+                What you're experiencing is <strong style={{ color:"#ED93B1" }}>not permanent</strong>. It is not age. It is not your fault. Your body has not abandoned you — it is simply waiting for the right guidance.{" "}
+                <strong style={{ color:"#ED93B1" }}>This guide is that guidance.</strong>
               </p>
             </div>
-          </ScrollAnimate>
+          </div>
         </div>
-      </section>
 
-      {/* Footer */}
-      <footer className="py-8 px-4 bg-[#1a0f06] text-center">
-        <p className="text-[#fdf6ee]/30 text-xs">
-          © 2026 All Rights Reserved. This product is sold through Selar.
-        </p>
-      </footer>
-    </main>
-  )
+        {/* ══ PRODUCT INTRO ═════════════════════════════════════ */}
+        <section className="da-product">
+          <span style={{ fontSize:11, fontWeight:700, letterSpacing:3, textTransform:"uppercase", color:"#D4537E", display:"block", marginBottom:8 }}>Introducing</span>
+          <h2 className="serif" style={{ fontSize:26, color:"#3d1020", lineHeight:1.3, fontWeight:700, marginBottom:8 }}>
+            How To Feel Desired, Wet &amp; Excited Again After 40
+          </h2>
+          <p style={{ fontSize:14, color:"#888780", fontStyle:"italic", marginBottom:8 }}>
+            A Private Step-by-Step Guide to Reignite Your Body, Confidence &amp; Attraction
+          </p>
+          <div className="da-inside-grid">
+            {insideItems.map((item, i) => (
+              <div key={i} style={{ display:"flex", alignItems:"flex-start", gap:12 }}>
+                <span style={{ width:22, height:22, background:"#D4537E", borderRadius:"50%", flexShrink:0, display:"flex", alignItems:"center", justifyContent:"center", color:"#fff", fontSize:12, marginTop:2 }}>✓</span>
+                <p style={{ fontSize:14, color:"#444441", lineHeight:1.5 }}>{item}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* ══ TESTIMONIALS ══════════════════════════════════════ */}
+        <section className="da-testi">
+          <h2 className="serif" style={{ fontSize:22, color:"#3d1020", textAlign:"center", marginBottom:6, fontWeight:700 }}>
+            Women just like you are already feeling the difference
+          </h2>
+          <p style={{ fontSize:13, color:"#888780", textAlign:"center", marginBottom:24, fontStyle:"italic" }}>
+            Real results. Real Nigerian women. Names shared with permission.
+          </p>
+          <div className="da-testi-grid">
+            {testimonials.map((t, i) => (
+              <div key={i} style={{ background:"#fff", borderRadius:14, padding:"20px 18px", border:"1px solid #F4C0D1" }}>
+                <p style={{ color:"#D4537E", fontSize:14, letterSpacing:2, marginBottom:10 }}>★★★★★</p>
+                <p style={{ fontSize:14, color:"#3C3434", lineHeight:1.6, fontStyle:"italic", marginBottom:14 }}>{t.text}</p>
+                <div style={{ display:"flex", alignItems:"center", gap:10 }}>
+                  <div style={{ width:36, height:36, borderRadius:"50%", background:"linear-gradient(135deg,#D4537E,#6b1f3a)", display:"flex", alignItems:"center", justifyContent:"center", color:"#fff", fontSize:13, fontWeight:700, flexShrink:0 }}>{t.initial}</div>
+                  <div>
+                    <p style={{ fontSize:13, fontWeight:700, color:"#3d1020" }}>{t.name}</p>
+                    <p style={{ fontSize:12, color:"#888780" }}>{t.detail}</p>
+                    <p style={{ fontSize:11, color:"#D4537E", fontWeight:700 }}>✓ Verified Buyer</p>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* ══ BONUSES ═══════════════════════════════════════════ */}
+        <section className="da-bonuses">
+          <h2 className="serif" style={{ fontSize:22, color:"#3d1020", textAlign:"center", marginBottom:6, fontWeight:700 }}>
+            Order today and get these 4 free bonuses
+          </h2>
+          <p style={{ fontSize:13, color:"#888780", textAlign:"center" }}>Valued at over ₦20,000 — yours at no extra cost</p>
+          <div className="da-bonuses-grid">
+            {bonuses.map((b, i) => (
+              <div key={i} style={{ display:"flex", gap:14, padding:16, background:"#fff", borderRadius:12, border:"1px solid #F4C0D1", alignItems:"flex-start" }}>
+                <div style={{ width:36, height:36, background:"linear-gradient(135deg,#D4537E,#993556)", borderRadius:8, display:"flex", alignItems:"center", justifyContent:"center", color:"#fff", fontSize:11, fontWeight:700, flexShrink:0 }}>{b.code}</div>
+                <div>
+                  <p style={{ fontSize:10, color:"#D4537E", fontWeight:700, letterSpacing:2, textTransform:"uppercase", marginBottom:3 }}>Free Bonus</p>
+                  <p style={{ fontSize:14, fontWeight:700, color:"#3d1020", marginBottom:4, lineHeight:1.3 }}>{b.name}</p>
+                  <p style={{ fontSize:13, color:"#5F5E5A", lineHeight:1.4 }}>{b.desc}</p>
+                  <p style={{ fontSize:11, color:"#888780", marginTop:4 }}>Value: <span style={{ textDecoration:"line-through" }}>₦5,000</span> <strong style={{ color:"#D4537E" }}>Free</strong></p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* ══ PRIVACY ═══════════════════════════════════════════ */}
+        <div style={{ background:"#F0F9F5", border:"1px solid #9FE1CB", borderRadius:12, padding:"16px 20px", margin:"0 24px 0", display:"flex", gap:12, alignItems:"flex-start" }}>
+          <span style={{ fontSize:22, flexShrink:0 }}>🔒</span>
+          <div>
+            <h4 style={{ fontSize:13, fontWeight:700, color:"#0F6E56", marginBottom:4 }}>Your privacy is completely protected</h4>
+            <p style={{ fontSize:12, color:"#085041", lineHeight:1.5 }}>100% discreet digital purchase. It will appear as a neutral name on your bank statement. Nobody will know what you bought — this is your private journey.</p>
+          </div>
+        </div>
+
+        {/* ══ PRICING ═══════════════════════════════════════════ */}
+        <section id="pricing" className="da-pricing">
+          <div className="da-pricing-inner">
+            <span style={{ fontSize:11, fontWeight:700, letterSpacing:3, textTransform:"uppercase", color:"#ED93B1", display:"block", marginBottom:16 }}>Get Everything Today</span>
+            <h2 className="serif" style={{ fontSize:24, fontWeight:700, marginBottom:8 }}>Everything you need to feel like yourself again</h2>
+            <p style={{ fontSize:14, color:"rgba(255,255,255,0.70)", marginBottom:28 }}>One payment. Instant access. Complete privacy.</p>
+
+            <div style={{ background:"rgba(255,255,255,0.05)", borderRadius:12, padding:20, marginBottom:24, border:"1px solid rgba(212,83,126,0.30)", textAlign:"left" }}>
+              {valueStack.map(([label, price], i) => (
+                <div key={i} style={{ display:"flex", justifyContent:"space-between", alignItems:"center", padding:"9px 0", borderBottom:"1px solid rgba(255,255,255,0.08)", fontSize:13, color:"rgba(255,255,255,0.80)" }}>
+                  <span>{label}</span>
+                  <span style={{ textDecoration:"line-through", color:"rgba(255,255,255,0.38)", flexShrink:0, marginLeft:8 }}>{price}</span>
+                </div>
+              ))}
+              <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", paddingTop:16, fontWeight:700, color:"#fff" }}>
+                <span style={{ fontSize:15 }}>You pay today:</span>
+                <span className="serif" style={{ fontSize:28, color:"#ED93B1" }}>₦4,500</span>
+              </div>
+            </div>
+
+            <button className="btn-rose" onClick={goToCheckout} style={{ width:"100%", padding:"18px 32px", fontSize:17, marginBottom:12 }}>
+              Yes! I Want to Feel Desired Again →
+            </button>
+            <p style={{ fontSize:12, color:"rgba(255,255,255,0.50)", lineHeight:1.5 }}>
+              🔒 Secure checkout · Instant delivery · 100% discreet on your bank statement<br />
+              Available in Nigeria, Ghana and across Africa
+            </p>
+          </div>
+        </section>
+
+        {/* ══ FINAL NUDGE ═══════════════════════════════════════ */}
+        <section className="da-final">
+          <h2 className="serif" style={{ fontSize:20, color:"#3d1020", fontWeight:700, marginBottom:12 }}>
+            "I was sceptical too. Then I followed the steps."
+          </h2>
+          <p style={{ fontSize:14, color:"#5F5E5A", lineHeight:1.65, marginBottom:20, maxWidth:520, margin:"0 auto 20px" }}>
+            If Nididi from Owerri, Chinelo, and Ama all the way from Accra can feel the difference — so can you. You've already taken the first step by reading this far. Don't let doubt win today.
+          </p>
+          <button className="btn-rose" onClick={goToCheckout} style={{ display:"block", width:"100%", maxWidth:420, padding:"16px 32px", fontSize:16, margin:"0 auto" }}>
+            I'm Ready. Let Me In →
+          </button>
+          <p style={{ fontSize:12, color:"#B4B2A9", marginTop:12 }}>🔒 Private · Secure · Instant Access</p>
+        </section>
+
+      </div>
+    </>
+  );
 }
