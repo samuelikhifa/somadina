@@ -9,7 +9,7 @@
 
 import { useEffect } from "react";
 
-const CHECKOUT_URL = "https://selar.co/YOUR-PRODUCT-LINK-HERE"; // ← paste your Selar / Paystack link here
+const CHECKOUT_URL = "https://selar.co/desired"; // ← paste your Selar / Paystack link here
 const FB_PIXEL_ID  = "271502917879217";
 
 export default function DesiredAgainPage() {
