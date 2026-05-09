@@ -131,7 +131,7 @@ export default function DesiredAgainPage() {
         />
       </noscript>
 
-      <style>{`
+      <style suppressHydrationWarning>{`
         /* Fonts */
         body { font-family: 'Lato', sans-serif; }
         .serif { font-family: 'Playfair Display', Georgia, serif; }
